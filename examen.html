@@ -1,0 +1,209 @@
+<meta charset="utf-8">
+
+<script>
+
+	var bandas=[
+		{
+			nombre: "Rammstein",
+			genero: "Metal",
+			ano: "1998"
+		}
+	];
+	var albunes=[
+		{
+			nombre: "Mutter",
+			banda: 0,
+			ano: "2007"
+		}
+	];
+	var canciones=[
+		{
+			album: 0,
+			nombre: "Zwitter",
+			duracion: "4:17"
+		}
+	];
+	console.log(canciones);
+	var opcion;
+	do{
+		opcion=parseInt(prompt("1.- Registrar banda"+
+					"\n2.- Registrar álbum"+
+					"\n3.- Registrar canciones"+
+					"\n4.- Buscar por genero"+
+					"\n5.- Buscar por álbum"+
+					"\n6.- Buscar canción"+
+					"\n7.- Mostrar todo"+
+					"\n0.- Salir"));
+		switch(opcion){
+			case 1: registrar_banda(parseInt(prompt("¿Cuántas bandas?"))); break;
+			case 2: registrar_album(parseInt(prompt("¿Cuántos álbunes?"))); break;
+			case 3: registrar_cancion(parseInt(prompt("¿Cuántas canciones?"))); break;
+			case 4: alert(buscar('genero',prompt("Digite el genero a buscar"))); break;
+			case 5: alert(buscar('album',prompt("Digite el álbum a buscar"))); break;
+			case 6: alert(buscar('cancion',prompt("Digite la canción a buscar"))); break;
+			case 7: alert(buscar('todo','')); break;
+			case 0: alert("Adiós");
+		}
+	}while(opcion!=0);
+
+	function registrar_banda(n){
+		for(let a=0; a<n; a++){
+			let posicion_almacenar=bandas.length;
+			bandas[posicion_almacenar]={};
+			do{
+				bandas[posicion_almacenar]['nombre']=prompt((a+1)+".- Nombre del álbum")??"";
+			}while(bandas[posicion_almacenar]['nombre']=="");
+			do{
+				bandas[posicion_almacenar]['genero']=prompt((a+1)+".- Nombre del genero")??"";
+			}while(bandas[posicion_almacenar]['genero']=="");
+			do{
+				bandas[posicion_almacenar]['ano']=prompt((a+1)+".- Año del álbum")??"";
+			}while(bandas[posicion_almacenar]['ano']=="");
+		}
+	}
+
+	function registrar_album(n){
+		for(let a=0; a<n; a++){
+			let posicion_almacenar=albunes.length;
+			albunes[posicion_almacenar]={};
+			do{
+				albunes[posicion_almacenar]['nombre']=prompt((a+1)+".- Nombre del álbum")??"";
+			}while(albunes[posicion_almacenar]['nombre']=="");
+			do{
+				albunes[posicion_almacenar]['banda']=prompt((a+1)+".- Elige una banda\n"+enlistar_bandas())??"";
+			}while(albunes[posicion_almacenar]['banda']=="" ||
+					albunes[posicion_almacenar]['banda']>bandas.length ||
+					albunes[posicion_almacenar]['banda']<=0);
+			albunes[posicion_almacenar]['banda']-=1;
+			do{
+				albunes[posicion_almacenar]['ano']=prompt((a+1)+".- Año del álbum")??"";
+			}while(albunes[posicion_almacenar]['ano']=="");
+		}
+	}
+	function enlistar_bandas(){
+		let lista="";
+		for(let a=0; a<bandas.length; a++){
+			lista+="\n"+(a+1)+".- Banda: "+bandas[a]['nombre'];
+		}
+		return lista;
+	}
+
+	function registrar_cancion(n){
+		for(let a=0; a<n; a++){
+			let posicion_almacenar=canciones.length;
+			canciones[posicion_almacenar]={};
+			do{
+				canciones[posicion_almacenar]['album']=prompt((a+1)+".- Elige una banda-álbum\n"+enlistar_albunes())??"";
+			}while(canciones[posicion_almacenar]['album']=="" ||
+					canciones[posicion_almacenar]['album']>bandas.length ||
+					canciones[posicion_almacenar]['album']<=0);
+			canciones[posicion_almacenar]['album']-=1;
+			do{
+				canciones[posicion_almacenar]['nombre']=prompt((a+1)+".- Nombre de la canción")??"";
+			}while(canciones[posicion_almacenar]['nombre']=="");
+			do{
+				canciones[posicion_almacenar]['duracion']=prompt((a+1)+".- Duración")??"";
+			}while(canciones[posicion_almacenar]['duracion']=="");
+		}
+	}
+	function enlistar_albunes(){
+		let lista="";
+		for(let a=0; a<albunes.length; a++){
+			lista+="\n"+(a+1)+".- Álbum: "+albunes[a]['nombre']+" de "+bandas[albunes[a]['banda']]['nombre'];
+		}
+		return lista;
+	}
+
+	function buscar(op,busqueda){
+		busqueda??="";
+		let lista="";
+		let encontro=false;
+		switch(op){
+			case 'genero':
+						lista+="Genero: "+busqueda+"\n";
+						encontro=false;
+						for(let a=0; a<bandas.length; a++){
+							if(bandas[a]['genero']==busqueda){
+								encontro=true;
+								lista+="\n"+bandas[a]['nombre']+"\n\t";
+								for(let b=0; b<albunes.length; b++){
+									let albunes_banda="";
+									if(albunes[a]['banda']==a){
+										albunes_banda+="- "+albunes[a]['nombre']+"\n";
+									}
+									lista+=(albunes_banda=="")?"(No tiene albunes)":albunes_banda;
+								}
+							}
+						}
+						if(encontro==false){
+							return "El genero ( "+busqueda+" ) no existe";
+						}
+						break;
+			case 'album':
+						lista+="Álbum: "+busqueda+"\n";
+						encontro=false;
+						for(let a=0; a<albunes.length; a++){
+							if(albunes[a]['nombre']==busqueda){
+								encontro=true;
+								for(let b=0; b<bandas.length; b++){
+									if(albunes[a]['banda']==b){
+										lista+="Banda: "+bandas[b]['nombre']+"\n";
+									}
+									let canciones_album="";
+									for(let c=0; c<canciones.length; c++){
+										if(canciones[c]['album']==a){
+											canciones_album+=canciones[c]['nombre']+",";
+										}
+									}
+									lista+=(canciones_album=="")?"(No tiene canciones)":"Canciones: "+canciones_album;
+								}
+							}
+						}
+						if(encontro==false){
+							return "El genero ( "+busqueda+" ) no existe";
+						}
+						break;
+			case 'cancion':
+						lista+="Canción: "+busqueda+"\n";
+						encontro=false;
+						for(let a=0; a<canciones.length; a++){
+							if(canciones[a]['nombre']==busqueda){
+								encontro=true;
+								for(let b=0; b<albunes.length; b++){
+									if(canciones[a]['album']==b){
+										lista+="Álbum: "+albunes[b]['nombre']+"\n";
+										let posicion_banda=albunes[b]['banda'];
+										lista+="Banda: "+bandas[posicion_banda]['nombre']+"\n";
+									}
+								}
+							}
+						}
+						if(encontro==false){
+							return "La canción ( "+busqueda+" ) no existe";
+						}
+						break;
+			case 'todo':
+						lista="";
+						for(let a=0; a<bandas.length; a++){
+							lista+="\n"+bandas[a]['nombre'];
+							lista+="\n\tGenero: "+bandas[a]['genero'];
+							lista+="\n\tAño: "+bandas[a]['ano'];
+							lista+="\n\tÁlbunes:";
+							for(let b=0; b<albunes.length; b++){
+								if(albunes[b]['banda']==a){
+									lista+="\n\t\t"+albunes[b]['nombre'];
+									for(let c=0; c<canciones.length; c++){
+										if(canciones[c]['album']==b){
+											lista+="\n\t\t\t- "+canciones[c]['nombre'];
+										}
+									}
+								}
+							}
+						}
+						break;
+			default: return "Opción no válida"; break;
+		}
+		return (lista=="")?op+" ( "+busqueda+" ) no existe":lista;
+	}
+	
+</script>
